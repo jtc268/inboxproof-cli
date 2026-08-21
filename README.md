@@ -16,6 +16,12 @@ $ cd inboxproof-cli
 $ node index.js example.com
 ```
 
+For JSON output (CI/CD pipelines, scripting):
+
+```
+$ npx github:jtc268/inboxproof-cli example.com --json
+```
+
 ## What it checks
 
 | Check | What it looks for |
