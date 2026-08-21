@@ -9,11 +9,17 @@ import net from 'node:net';
 
 const args = process.argv.slice(2);
 const jsonMode = args.includes('--json');
-const domain = (args.find(a => !a.startsWith('--')) || '').trim().toLowerCase().replace(/^\.+|\.+$/g, '');
+const thresholdIdx = args.indexOf('--threshold');
+const threshold = thresholdIdx !== -1 ? parseInt(args[thresholdIdx + 1], 10) : null;
+const domain = (args.find(a => !a.startsWith('--') && args.indexOf(a) !== thresholdIdx + 1) || '').trim().toLowerCase().replace(/^\.+|\.+$/g, '');
 if (!domain || !/^[a-z0-9.-]+$/.test(domain)) {
-  console.error('Usage: inboxproof <domain> [--json]');
+  console.error('Usage: inboxproof <domain> [--json] [--threshold <0-100>]');
   console.error('Example: inboxproof example.com');
-  console.error('Example: inboxproof example.com --json');
+  console.error('Example: inboxproof example.com --json --threshold 80');
+  process.exit(1);
+}
+if (threshold !== null && (isNaN(threshold) || threshold < 0 || threshold > 100)) {
+  console.error('Error: --threshold must be a number between 0 and 100.');
   process.exit(1);
 }
 
@@ -112,16 +118,20 @@ const WEIGHTS = { MX: 25, SPF: 20, DKIM: 20, DMARC: 20, PTR: 5, TLS: 10 };
   let score = 0;
   for (const r of results) score += r.pass ? WEIGHTS[r.name] : 0;
 
+  const passThreshold = threshold === null || score >= threshold;
+
   if (jsonMode) {
     const out = {
       domain,
       score,
       grade: score >= 80 ? 'healthy' : score >= 50 ? 'at-risk' : 'high-spam-risk',
+      threshold: threshold,
+      pass: passThreshold,
       checks: results.map(r => ({ name: r.name, pass: r.pass, detail: r.detail, fix: r.fix || null })),
       fullAudit: 'https://inboxproof-phi.vercel.app/'
     };
     console.log(JSON.stringify(out, null, 2));
-    process.exit(0);
+    process.exit(passThreshold ? 0 : 1);
   }
 
   console.log(`\nInboxproof deliverability audit: ${domain}\n` + '-'.repeat(48));
@@ -134,9 +144,12 @@ const WEIGHTS = { MX: 25, SPF: 20, DKIM: 20, DMARC: 20, PTR: 5, TLS: 10 };
   console.log('');
   const grade = score >= 80 ? 'Healthy' : score >= 50 ? 'At risk' : 'High spam risk';
   console.log(`  Score: ${score}/100  (${grade})`);
+  if (threshold !== null) {
+    console.log(`  Threshold: ${threshold}/100  ${passThreshold ? '(PASS)' : '(FAIL)'}`);
+  }
   const fails = results.filter(r => !r.pass).length;
   console.log(`\n  ${fails === 0 ? 'All checks passed.' : `${fails} check(s) need attention.`}`);
   console.log('  Full audit with TLS, IP reputation and per-check detail:');
   console.log('  https://inboxproof-phi.vercel.app/\n');
-  process.exit(0);
+  process.exit(passThreshold ? 0 : 1);
 })();
