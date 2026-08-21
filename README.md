@@ -2,13 +2,17 @@
 
 Free command-line email deliverability audit. Run it against any domain and get a spam-risk score plus the exact DNS record to fix. No account, no signup, no cost.
 
-```
-$ npx inboxproof-cli example.com
-```
-
-Or run it directly:
+Run it straight from GitHub:
 
 ```
+$ npx github:jtc268/inboxproof-cli example.com
+```
+
+Or clone and run it directly:
+
+```
+$ git clone https://github.com/jtc268/inboxproof-cli
+$ cd inboxproof-cli
 $ node index.js example.com
 ```
 
