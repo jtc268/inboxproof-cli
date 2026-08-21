@@ -7,10 +7,13 @@
 import dns from 'node:dns';
 import net from 'node:net';
 
-const domain = (process.argv[2] || '').trim().toLowerCase().replace(/^\.+|\.+$/g, '');
+const args = process.argv.slice(2);
+const jsonMode = args.includes('--json');
+const domain = (args.find(a => !a.startsWith('--')) || '').trim().toLowerCase().replace(/^\.+|\.+$/g, '');
 if (!domain || !/^[a-z0-9.-]+$/.test(domain)) {
-  console.error('Usage: inboxproof <domain>');
+  console.error('Usage: inboxproof <domain> [--json]');
   console.error('Example: inboxproof example.com');
+  console.error('Example: inboxproof example.com --json');
   process.exit(1);
 }
 
@@ -99,7 +102,6 @@ function checkTLS(mxHosts) {
 const WEIGHTS = { MX: 25, SPF: 20, DKIM: 20, DMARC: 20, PTR: 5, TLS: 10 };
 
 (async () => {
-  console.log(`\nInboxproof deliverability audit: ${domain}\n` + '-'.repeat(48));
   const mxHosts = await checkMX();
   await checkSPF();
   await checkDKIM();
@@ -110,6 +112,19 @@ const WEIGHTS = { MX: 25, SPF: 20, DKIM: 20, DMARC: 20, PTR: 5, TLS: 10 };
   let score = 0;
   for (const r of results) score += r.pass ? WEIGHTS[r.name] : 0;
 
+  if (jsonMode) {
+    const out = {
+      domain,
+      score,
+      grade: score >= 80 ? 'healthy' : score >= 50 ? 'at-risk' : 'high-spam-risk',
+      checks: results.map(r => ({ name: r.name, pass: r.pass, detail: r.detail, fix: r.fix || null })),
+      fullAudit: 'https://inboxproof-phi.vercel.app/'
+    };
+    console.log(JSON.stringify(out, null, 2));
+    process.exit(0);
+  }
+
+  console.log(`\nInboxproof deliverability audit: ${domain}\n` + '-'.repeat(48));
   console.log('');
   for (const r of results) {
     const mark = r.pass ? 'PASS' : 'FAIL';
