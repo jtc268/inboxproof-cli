@@ -22,6 +22,12 @@ For JSON output (CI/CD pipelines, scripting):
 $ npx github:jtc268/inboxproof-cli example.com --json
 ```
 
+Gate a deploy on a minimum score (exits 1 if below threshold):
+
+```
+$ npx github:jtc268/inboxproof-cli example.com --threshold 80
+```
+
 ## What it checks
 
 | Check | What it looks for |
