@@ -1,5 +1,9 @@
 # inboxproof-cli
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js 18+](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![No dependencies](https://img.shields.io/badge/dependencies-none-blue.svg)](https://github.com/jtc268/inboxproof-cli)
+
 Free command-line email deliverability audit. Point it at any domain and get a 0 to 100 spam-risk score plus the exact DNS record to fix. No account, no signup, no cost, no dependencies. It reads your live DNS only, so it is safe to run in CI and it changes nothing.
 
 Run it straight from GitHub:
