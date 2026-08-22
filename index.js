@@ -44,10 +44,23 @@ async function checkMX() {
 async function checkSPF() {
   try {
     const txt = await dns.promises.resolveTxt(domain);
-    const spf = txt.flat().find(t => t.toLowerCase().startsWith('v=spf1'));
-    if (spf) add('SPF', true, `SPF: ${spf}`);
-    else add('SPF', false, 'No SPF record found.', `Add TXT: "v=spf1 include:_spf.google.com ~all" (adjust to your mail provider).`);
-    return spf || null;
+    const spfRecords = txt.flat().filter(t => t.toLowerCase().startsWith('v=spf1'));
+    if (spfRecords.length > 1) {
+      add('SPF', false, `${spfRecords.length} SPF records found. Multiple SPF records make the domain's SPF invalid.`, 'Delete all but one SPF TXT record.');
+      return null;
+    }
+    const spf = spfRecords[0] || null;
+    if (spf) {
+      const q = spf.toLowerCase();
+      let note = '';
+      if (/-all\b/.test(q)) note = ' (ends with -all hardfail, strongest)';
+      else if (/~all\b/.test(q)) note = ' (ends with ~all softfail; -all is stronger)';
+      else note = ' (no -all/~all qualifier; add ~all or -all)';
+      add('SPF', true, `SPF: ${spf}${note}`);
+    } else {
+      add('SPF', false, 'No SPF record found.', `Add TXT: "v=spf1 include:_spf.google.com ~all" (adjust to your mail provider).`);
+    }
+    return spf;
   } catch (e) {
     add('SPF', false, `SPF lookup failed: ${e.code || e.message}`, `Add an SPF TXT record for ${domain}.`);
     return null;
