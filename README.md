@@ -70,30 +70,34 @@ jobs:
 
 ## Example output
 
+Run it against any domain:
+
 ```
 $ npx github:jtc268/inboxproof-cli example.com
 
-  example.com  ·  score 85/100  ·  B (Good)
+Inboxproof deliverability audit: example.com
+------------------------------------------------
 
-  ✓ MX            mx.example.com (10)
-  ✓ SPF           v=spf1 mx -all
-  ✓ SPF limits    2 lookups (limit 10)
-  ✓ DKIM          selector=mail, key found
-  ✓ DMARC         v=DMARC1 p=reject
-  ✓ DMARC policy  p=reject
-  ✓ PTR           mx.example.com -> mail.example.com
-  ✓ TLS           STARTTLS advertised on port 25
+  [FAIL] MX     No usable MX records found.
+         fix: Add an MX record for example.com.
+  [PASS] SPF    SPF: v=spf1 -all
+  [PASS] SPF limits 0 DNS lookup(s) (limit 10).
+  [PASS] DKIM   DKIM (default): v=DKIM1; p=...
+  [PASS] DMARC  DMARC: v=DMARC1;p=reject;sp=reject;adkim=s;aspf=s
+  [PASS] DMARC policy p=reject (strongest enforcement).
+  [FAIL] PTR    Skipped (no MX host).
+         fix: PTR is checked against the sending IP in the full audit.
+  [FAIL] TLS    Skipped (no MX host).
+         fix: SMTP STARTTLS is checked against the mail server in the full audit.
 
-  All checks passed. Your domain is inbox-ready.
+  Score: 60/100  (At risk)
+
+  3 check(s) need attention.
+  Full audit with TLS, IP reputation and per-check detail:
+  https://inboxproof.email/
 ```
 
-A failing domain shows the exact record to fix:
-
-```
-  ✕ DMARC         no _dmarc.example.com TXT record
-      fix: add TXT record at _dmarc.example.com:
-      v=DMARC1 p=none pct=100 rua=mailto:dmarc@example.com
-```
+Every failing check prints the exact record to add or change. A healthy sending domain passes all eight checks and scores 100/100 (Healthy).
 
 ## Troubleshooting
 
