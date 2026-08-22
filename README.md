@@ -164,6 +164,10 @@ npx github:jtc268/inboxproof-cli example.com
 
 MIT. Use it, modify it, ship it. No strings attached.
 
+## Contributors
+
+This project was built by the inboxproof team. If you have a feature request or a bug report, open an issue. If you want to contribute code, fork the repo and open a pull request.
+
 ## Report a problem
 
 Found a domain it scores wrong, or a check that should be weighted differently? Open an issue:
