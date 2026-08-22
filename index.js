@@ -47,8 +47,35 @@ async function checkSPF() {
     const spf = txt.flat().find(t => t.toLowerCase().startsWith('v=spf1'));
     if (spf) add('SPF', true, `SPF: ${spf}`);
     else add('SPF', false, 'No SPF record found.', `Add TXT: "v=spf1 include:_spf.google.com ~all" (adjust to your mail provider).`);
+    return spf || null;
   } catch (e) {
     add('SPF', false, `SPF lookup failed: ${e.code || e.message}`, `Add an SPF TXT record for ${domain}.`);
+    return null;
+  }
+}
+
+// SPF allows at most 10 DNS lookups; more than that makes validation fail (permerror).
+function countSpfLookups(spf) {
+  const tokens = spf.toLowerCase().split(/\s+/);
+  let count = 0;
+  for (const t of tokens) {
+    if (t.startsWith('include:') || t === 'a' || t.startsWith('a:') ||
+        t === 'mx' || t.startsWith('mx:') ||
+        t === 'ptr' || t.startsWith('ptr:') ||
+        t.startsWith('exists:') || t.startsWith('redirect=')) {
+      count++;
+    }
+  }
+  return count;
+}
+
+function checkSPFLimits(spfRecord) {
+  if (!spfRecord) return;
+  const lookups = countSpfLookups(spfRecord);
+  if (lookups > 10) {
+    add('SPF limits', false, `${lookups} DNS lookups (SPF limit is 10). Validation will fail.`, 'Flatten the SPF record: reduce include/a/mx mechanisms to 10 or fewer.');
+  } else {
+    add('SPF limits', true, `${lookups} DNS lookup(s) (limit 10).`);
   }
 }
 
@@ -105,11 +132,12 @@ function checkTLS(mxHosts) {
   });
 }
 
-const WEIGHTS = { MX: 25, SPF: 20, DKIM: 20, DMARC: 20, PTR: 5, TLS: 10 };
+const WEIGHTS = { MX: 25, SPF: 15, 'SPF limits': 5, DKIM: 20, DMARC: 20, PTR: 5, TLS: 10 };
 
 (async () => {
   const mxHosts = await checkMX();
-  await checkSPF();
+  const spfRecord = await checkSPF();
+  checkSPFLimits(spfRecord);
   await checkDKIM();
   await checkDMARC();
   await checkPTR(mxHosts);
