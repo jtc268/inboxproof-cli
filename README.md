@@ -49,7 +49,7 @@ Most email that lands in spam (or the provider's blacklist) fails one of these c
 
 The CLI covers the DNS layer. For the complete picture, TLS handshake detail, sending-IP reputation, and a step-by-step fix guide, use the free web audit:
 
-https://inboxproof-phi.vercel.app/
+https://inboxproof.email/
 
 ## Report a problem
 
