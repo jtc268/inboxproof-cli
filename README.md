@@ -51,6 +51,12 @@ The CLI covers the DNS layer. For the complete picture, TLS handshake detail, se
 
 https://inboxproof-phi.vercel.app/
 
+## Report a problem
+
+Found a domain it scores wrong, or a check that should be weighted differently? Open an issue:
+
+https://github.com/jtc268/inboxproof-cli/issues
+
 ## Requirements
 
 Node.js 18 or later. No dependencies.
