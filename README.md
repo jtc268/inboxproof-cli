@@ -91,6 +91,29 @@ A failing domain shows the exact record to fix:
       v=DMARC1 p=none pct=100 rua=mailto:dmarc@example.com
 ```
 
+## Troubleshooting
+
+**"No MX record found"**
+Your domain has no MX record. Add one pointing to your mail server. Most ESPs (SendGrid, Mailgun, Postmark, etc.) provide the exact record to add.
+
+**"SPF record not found"**
+Your domain has no SPF record. Add a TXT record with `v=spf1` and the senders you authorize. Most ESPs provide the exact record.
+
+**"SPF lookup limit exceeded"**
+Your SPF record has more than 10 DNS lookups. This is a hard limit in the SPF spec. Simplify your SPF record by using `include:` for shared services or by listing only the senders you actually use.
+
+**"DKIM record not found"**
+Your domain has no DKIM record. Add a TXT record at `<selector>._domainkey.domain` with the public key from your ESP. Common selectors: `mail`, `default`, `k1`, `s1`, `s2`.
+
+**"DMARC record not found"**
+Your domain has no DMARC record. Add a TXT record at `_dmarc.domain` with `v=DMARC1 p=none` to start. You can tighten the policy later.
+
+**"No PTR record"**
+Your mail server has no reverse DNS (PTR) record. This is usually set by your hosting provider or ESP. If you control the IP, add a PTR record pointing to your mail server hostname.
+
+**"TLS not advertised"**
+Your mail server does not advertise STARTTLS on port 25. This is usually a server configuration issue. If you use an ESP, they should handle TLS. If you self-host, enable STARTTLS in your MTA configuration.
+
 ## Why
 
 Most email that lands in spam (or the provider's blacklist) fails one of these checks. This tool tells you which one in about ten seconds, from your terminal, with the exact fix.
