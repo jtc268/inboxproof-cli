@@ -147,6 +147,20 @@ Yes. Run it against any domain, including subdomains: `npx github:jtc268/inboxpr
 **What does the score mean?**
 The score is a weighted sum of the 8 checks. A score of 80 or higher is "Good" (B or better). Anything under 80 is flagged with the exact record to add or change.
 
+## Changelog
+
+**v1.1.0** (2026-08-22)
+- Added SPF lookup limit check (flags SPF records with more than 10 DNS lookups)
+- Added DMARC policy check (flags `p=none` as a warning)
+- Added Troubleshooting section to README
+- Added Contributing section to README
+- Added FAQ section to README
+
+**v1.0.0** (2026-08-15)
+- Initial release with 6 checks: MX, SPF, DKIM, DMARC, PTR, TLS
+- Score calculation and threshold gating
+- JSON output for CI/CD pipelines
+
 ## Requirements
 
 Node.js 18 or later. No dependencies.
