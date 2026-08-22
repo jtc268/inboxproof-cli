@@ -160,6 +160,10 @@ You can also run the CLI against a known-good domain to verify it works:
 npx github:jtc268/inboxproof-cli example.com
 ```
 
+## License
+
+MIT. Use it, modify it, ship it. No strings attached.
+
 ## Report a problem
 
 Found a domain it scores wrong, or a check that should be weighted differently? Open an issue:
