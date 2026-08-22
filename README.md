@@ -37,7 +37,7 @@ curl "https://inboxproof.email/api/spam-check?domain=yourdomain.com"
 - `mx-check` - MX records and whether they resolve
 - `blocklist-check` - IP blocklist status (Spamhaus, SpamCop, and more)
 
-Each returns JSON. Rate limit: 20 checks/hour per IP. Full docs and response shapes: https://inboxproof.email/developers
+Each returns JSON. Rate limit: 20 checks/hour per IP. Full docs, response shapes, and an interactive playground that runs any of these checks live in the browser and shows you the exact call to copy: https://inboxproof.email/developers
 
 ## What it checks
 
