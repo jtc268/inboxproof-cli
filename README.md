@@ -24,6 +24,21 @@ node index.js example.com
 
 Prefer a click over a command? The same audit runs free in the browser, no account needed: https://inboxproof.email. It adds live IP reputation and a shareable report link on top of the DNS checks above.
 
+## Check without installing (public API)
+
+Prefer a quick check without running Node? The same checks are available as a free public API, no account or key needed:
+
+```
+curl "https://inboxproof.email/api/spam-check?domain=yourdomain.com"
+```
+
+- `spam-check` - full 7-check audit with a 0 to 100 risk score
+- `dmarc-check` - DMARC, SPF, DKIM, MX (4 checks, 0 to 100 score)
+- `mx-check` - MX records and whether they resolve
+- `blocklist-check` - IP blocklist status (Spamhaus, SpamCop, and more)
+
+Each returns JSON. Rate limit: 20 checks/hour per IP. Full docs and response shapes: https://inboxproof.email/developers
+
 ## What it checks
 
 | Check | Weight | What it looks for |
