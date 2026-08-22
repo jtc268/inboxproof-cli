@@ -168,6 +168,16 @@ MIT. Use it, modify it, ship it. No strings attached.
 
 This project was built by the inboxproof team. If you have a feature request or a bug report, open an issue. If you want to contribute code, fork the repo and open a pull request.
 
+## Support
+
+If you are stuck, open an issue with the exact command you ran and the output you got. I read every issue.
+
+You can also run the CLI against a known-good domain to verify it works:
+
+```bash
+npx github:jtc268/inboxproof-cli example.com
+```
+
 ## Report a problem
 
 Found a domain it scores wrong, or a check that should be weighted differently? Open an issue:
