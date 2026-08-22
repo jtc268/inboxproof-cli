@@ -20,6 +20,10 @@ cd inboxproof-cli
 node index.js example.com
 ```
 
+## Try it in your browser
+
+Prefer a click over a command? The same audit runs free in the browser, no account needed: https://inboxproof.email. It adds live IP reputation and a shareable report link on top of the DNS checks above.
+
 ## What it checks
 
 | Check | Weight | What it looks for |
