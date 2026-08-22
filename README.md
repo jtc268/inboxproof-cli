@@ -163,6 +163,13 @@ Yes. Run it against any domain, including subdomains: `npx github:jtc268/inboxpr
 **What does the score mean?**
 The score is a weighted sum of the 8 checks. A score of 80 or higher is "Good" (B or better). Anything under 80 is flagged with the exact record to add or change.
 
+## Roadmap
+
+- **v1.2.0**: Add a `--watch` mode that re-checks your domain every N seconds and alerts when a record changes. Useful during DNS propagation.
+- **v1.3.0**: Add a `--baseline` flag that saves your current score to a file and compares against it on subsequent runs. Useful for CI/CD.
+- **v1.4.0**: Add a `--json` flag that outputs the full audit as JSON. Useful for piping into other tools.
+- **v1.5.0**: Add a `--threshold` flag that sets the minimum score for a passing exit code. Useful for CI/CD.
+
 ## Changelog
 
 **v1.1.0** (2026-08-22)
