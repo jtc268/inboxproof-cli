@@ -134,6 +134,17 @@ https://github.com/jtc268/inboxproof-cli/issues
 
 Node.js 18 or later. No dependencies.
 
+## Contributing
+
+Found a bug, or want to add a new check? Open an issue first so we can discuss the approach. Then:
+
+1. Fork the repo and create a branch from `master`.
+2. Run the CLI against a known-good domain to make sure your local copy works: `node index.js example.com`.
+3. Make your change. Keep the no-dependencies promise: no `npm install` required.
+4. Open a PR with a short description of what the check does and why it matters.
+
+The codebase is a single `index.js` file. Each check is a function that returns `{ pass, detail, fix }`. The score is a weighted sum of the checks.
+
 ## License
 
 MIT
