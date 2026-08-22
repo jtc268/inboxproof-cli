@@ -173,7 +173,7 @@ const WEIGHTS = { MX: 25, SPF: 15, 'SPF limits': 5, DKIM: 20, DMARC: 15, 'DMARC 
       threshold: threshold,
       pass: passThreshold,
       checks: results.map(r => ({ name: r.name, pass: r.pass, detail: r.detail, fix: r.fix || null })),
-      fullAudit: 'https://inboxproof.email/?domain=' + encodeURIComponent(domain)
+      fullAudit: 'https://inboxproof.email/?domain=' + encodeURIComponent(domain) + '&ref=cli'
     };
     console.log(JSON.stringify(out, null, 2));
     process.exit(passThreshold ? 0 : 1);
@@ -195,6 +195,6 @@ const WEIGHTS = { MX: 25, SPF: 15, 'SPF limits': 5, DKIM: 20, DMARC: 15, 'DMARC 
   const fails = results.filter(r => !r.pass).length;
   console.log(`\n  ${fails === 0 ? 'All checks passed.' : `${fails} check(s) need attention.`}`);
   console.log('  Full audit with TLS, IP reputation and per-check detail:');
-  console.log('  https://inboxproof.email/?domain=' + encodeURIComponent(domain) + '\n');
+  console.log('  https://inboxproof.email/?domain=' + encodeURIComponent(domain) + '&ref=cli\n');
   process.exit(passThreshold ? 0 : 1);
 })();
