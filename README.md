@@ -82,6 +82,19 @@ npx github:jtc268/inboxproof-cli yourdomain.com --share
 
 The link is a permanent report page you can paste into a ticket, a PR, or send to whoever manages your DNS. In `--json` mode the link comes back as the `shareUrl` field.
 
+```
+$ npx github:jtc268/inboxproof-cli yourdomain.com --share
+
+  Score: 60/100  (At risk)
+
+  3 check(s) need attention.
+  Fix this first: MX - Add an MX record for yourdomain.com.
+  Full audit with TLS, IP reputation and per-check detail:
+  https://inboxproof.email/?domain=yourdomain.com&ref=cli
+  Shareable report link (anyone can view it, no account needed):
+  https://inboxproof.email/r/4f2a9c1e-8831-4b7a-9d2f-1c6e5b0a3d77
+```
+
 ## Example output
 
 Run it against any domain:
