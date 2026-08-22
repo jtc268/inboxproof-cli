@@ -2,7 +2,7 @@
 // inboxproof-cli: free command-line email deliverability audit.
 // Checks MX, SPF, DKIM, DMARC, PTR and SMTP STARTTLS for a domain.
 // Prints a spam-risk score and the exact record to fix.
-// Full audit (TLS, IP reputation, per-check detail): https://inboxproof-phi.vercel.app/
+// Full audit (TLS, IP reputation, per-check detail): https://inboxproof.email/
 
 import dns from 'node:dns';
 import net from 'node:net';
@@ -11,7 +11,7 @@ const args = process.argv.slice(2);
 const jsonMode = args.includes('--json');
 const thresholdIdx = args.indexOf('--threshold');
 const threshold = thresholdIdx !== -1 ? parseInt(args[thresholdIdx + 1], 10) : null;
-const domain = (args.find(a => !a.startsWith('--') && args.indexOf(a) !== thresholdIdx + 1) || '').trim().toLowerCase().replace(/^\.+|\.+$/g, '');
+const domain = (args.find((a, i) => !a.startsWith('--') && (thresholdIdx === -1 || i !== thresholdIdx + 1)) || '').trim().toLowerCase().replace(/^\.+|\.+$/g, '');
 if (!domain || !/^[a-z0-9.-]+$/.test(domain)) {
   console.error('Usage: inboxproof <domain> [--json] [--threshold <0-100>]');
   console.error('Example: inboxproof example.com');
@@ -128,7 +128,7 @@ const WEIGHTS = { MX: 25, SPF: 20, DKIM: 20, DMARC: 20, PTR: 5, TLS: 10 };
       threshold: threshold,
       pass: passThreshold,
       checks: results.map(r => ({ name: r.name, pass: r.pass, detail: r.detail, fix: r.fix || null })),
-      fullAudit: 'https://inboxproof-phi.vercel.app/'
+      fullAudit: 'https://inboxproof.email/'
     };
     console.log(JSON.stringify(out, null, 2));
     process.exit(passThreshold ? 0 : 1);
@@ -150,6 +150,6 @@ const WEIGHTS = { MX: 25, SPF: 20, DKIM: 20, DMARC: 20, PTR: 5, TLS: 10 };
   const fails = results.filter(r => !r.pass).length;
   console.log(`\n  ${fails === 0 ? 'All checks passed.' : `${fails} check(s) need attention.`}`);
   console.log('  Full audit with TLS, IP reputation and per-check detail:');
-  console.log('  https://inboxproof-phi.vercel.app/\n');
+  console.log('  https://inboxproof.email/\n');
   process.exit(passThreshold ? 0 : 1);
 })();
