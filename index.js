@@ -2,7 +2,7 @@
 // inboxproof-cli: free command-line email deliverability audit.
 // Checks MX, SPF, DKIM, DMARC, PTR and SMTP STARTTLS for a domain.
 // Prints a spam-risk score and the exact record to fix.
-// Full audit (TLS, IP reputation, per-check detail): https://inboxproof.email/
+// Full audit (TLS, IP reputation, per-check detail): https://inboxproof.email/?domain=<domain>
 
 import dns from 'node:dns';
 import net from 'node:net';
@@ -173,7 +173,7 @@ const WEIGHTS = { MX: 25, SPF: 15, 'SPF limits': 5, DKIM: 20, DMARC: 15, 'DMARC 
       threshold: threshold,
       pass: passThreshold,
       checks: results.map(r => ({ name: r.name, pass: r.pass, detail: r.detail, fix: r.fix || null })),
-      fullAudit: 'https://inboxproof.email/'
+      fullAudit: 'https://inboxproof.email/?domain=' + encodeURIComponent(domain)
     };
     console.log(JSON.stringify(out, null, 2));
     process.exit(passThreshold ? 0 : 1);
@@ -195,6 +195,6 @@ const WEIGHTS = { MX: 25, SPF: 15, 'SPF limits': 5, DKIM: 20, DMARC: 15, 'DMARC 
   const fails = results.filter(r => !r.pass).length;
   console.log(`\n  ${fails === 0 ? 'All checks passed.' : `${fails} check(s) need attention.`}`);
   console.log('  Full audit with TLS, IP reputation and per-check detail:');
-  console.log('  https://inboxproof.email/\n');
+  console.log('  https://inboxproof.email/?domain=' + encodeURIComponent(domain) + '\n');
   process.exit(passThreshold ? 0 : 1);
 })();
