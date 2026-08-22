@@ -64,6 +64,33 @@ jobs:
         run: npx github:jtc268/inboxproof-cli yourdomain.com --threshold 80
 ```
 
+## Example output
+
+```
+$ npx github:jtc268/inboxproof-cli example.com
+
+  example.com  ·  score 85/100  ·  B (Good)
+
+  ✓ MX            mx.example.com (10)
+  ✓ SPF           v=spf1 mx -all
+  ✓ SPF limits    2 lookups (limit 10)
+  ✓ DKIM          selector=mail, key found
+  ✓ DMARC         v=DMARC1 p=reject
+  ✓ DMARC policy  p=reject
+  ✓ PTR           mx.example.com -> mail.example.com
+  ✓ TLS           STARTTLS advertised on port 25
+
+  All checks passed. Your domain is inbox-ready.
+```
+
+A failing domain shows the exact record to fix:
+
+```
+  ✕ DMARC         no _dmarc.example.com TXT record
+      fix: add TXT record at _dmarc.example.com:
+      v=DMARC1 p=none pct=100 rua=mailto:dmarc@example.com
+```
+
 ## Why
 
 Most email that lands in spam (or the provider's blacklist) fails one of these checks. This tool tells you which one in about ten seconds, from your terminal, with the exact fix.
