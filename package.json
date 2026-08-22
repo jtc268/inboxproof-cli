@@ -1,7 +1,7 @@
 {
   "name": "inboxproof-cli",
-  "version": "1.1.2",
-  "description": "Free command-line email deliverability audit. Checks MX, SPF, DKIM, DMARC and TLS for a domain and prints a spam-risk score, the exact record to fix, and which check to fix first.",
+  "version": "1.2.0",
+  "description": "Free command-line email deliverability audit. Checks MX, SPF, DKIM, DMARC and TLS for a domain and prints a spam-risk score, the exact record to fix, which check to fix first, and a shareable report link with --share.",
   "type": "module",
   "bin": {
     "inboxproof": "index.js"

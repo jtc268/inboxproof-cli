@@ -9,11 +9,12 @@ import net from 'node:net';
 
 const args = process.argv.slice(2);
 const jsonMode = args.includes('--json');
+const shareMode = args.includes('--share');
 const thresholdIdx = args.indexOf('--threshold');
 const threshold = thresholdIdx !== -1 ? parseInt(args[thresholdIdx + 1], 10) : null;
 const domain = (args.find((a, i) => !a.startsWith('--') && (thresholdIdx === -1 || i !== thresholdIdx + 1)) || '').trim().toLowerCase().replace(/^\.+|\.+$/g, '');
 if (!domain || !/^[a-z0-9.-]+$/.test(domain)) {
-  console.error('Usage: inboxproof <domain> [--json] [--threshold <0-100>]');
+  console.error('Usage: inboxproof <domain> [--json] [--threshold <0-100>] [--share]');
   console.error('Example: inboxproof example.com');
   console.error('Example: inboxproof example.com --json --threshold 80');
   process.exit(1);
@@ -163,6 +164,23 @@ function checkTLS(mxHosts) {
 
 const WEIGHTS = { MX: 25, SPF: 15, 'SPF limits': 5, DKIM: 20, DMARC: 15, 'DMARC policy': 5, PTR: 5, TLS: 10 };
 
+// --share: ask the web service to run the full audit and return a public report link.
+async function shareAudit() {
+  if (!jsonMode) console.error('Creating shareable report at inboxproof.email ...');
+  try {
+    const res = await fetch('https://inboxproof.email/api/audit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ domain, ref: 'cli' })
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data && data.reportId ? `https://inboxproof.email/r/${data.reportId}` : null;
+  } catch {
+    return null;
+  }
+}
+
 (async () => {
   const mxHosts = await checkMX();
   const spfRecord = await checkSPF();
@@ -172,6 +190,8 @@ const WEIGHTS = { MX: 25, SPF: 15, 'SPF limits': 5, DKIM: 20, DMARC: 15, 'DMARC 
   checkDMARCPolicy(dmarcRecord);
   await checkPTR(mxHosts);
   await checkTLS(mxHosts);
+
+  const shareUrl = shareMode ? await shareAudit() : null;
 
   let score = 0;
   for (const r of results) score += r.pass ? WEIGHTS[r.name] : 0;
@@ -186,7 +206,8 @@ const WEIGHTS = { MX: 25, SPF: 15, 'SPF limits': 5, DKIM: 20, DMARC: 15, 'DMARC 
       threshold: threshold,
       pass: passThreshold,
       checks: results.map(r => ({ name: r.name, pass: r.pass, detail: r.detail, fix: r.fix || null })),
-      fullAudit: 'https://inboxproof.email/?domain=' + encodeURIComponent(domain) + '&ref=cli'
+      fullAudit: 'https://inboxproof.email/?domain=' + encodeURIComponent(domain) + '&ref=cli',
+      shareUrl: shareUrl
     };
     console.log(JSON.stringify(out, null, 2));
     process.exit(passThreshold ? 0 : 1);
@@ -212,6 +233,13 @@ const WEIGHTS = { MX: 25, SPF: 15, 'SPF limits': 5, DKIM: 20, DMARC: 15, 'DMARC 
     console.log(`  Fix this first: ${topFix.name} - ${topFix.fix || topFix.detail}`);
   }
   console.log('  Full audit with TLS, IP reputation and per-check detail:');
-  console.log('  https://inboxproof.email/?domain=' + encodeURIComponent(domain) + '&ref=cli\n');
+  console.log('  https://inboxproof.email/?domain=' + encodeURIComponent(domain) + '&ref=cli');
+  if (shareUrl) {
+    console.log('  Shareable report link (anyone can view it, no account needed):');
+    console.log('  ' + shareUrl);
+  } else if (shareMode) {
+    console.log('  Share link unavailable (network or rate limit); use the full audit link above.');
+  }
+  console.log('');
   process.exit(passThreshold ? 0 : 1);
 })();

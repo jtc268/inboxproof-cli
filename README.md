@@ -68,6 +68,16 @@ jobs:
         run: npx github:jtc268/inboxproof-cli yourdomain.com --threshold 80
 ```
 
+## Share a report link
+
+Add `--share` and the CLI asks the web service to run the full audit (including IP reputation) and prints a public report link anyone can open, no account needed:
+
+```
+npx github:jtc268/inboxproof-cli yourdomain.com --share
+```
+
+The link is a permanent report page you can paste into a ticket, a PR, or send to whoever manages your DNS. In `--json` mode the link comes back as the `shareUrl` field.
+
 ## Example output
 
 Run it against any domain:
@@ -133,6 +143,8 @@ The CLI covers the DNS layer. For the complete picture, TLS handshake detail, se
 
 https://inboxproof.email/
 
+Or run with `--share` to get the shareable report link straight from the terminal.
+
 ## How it compares
 
 | Tool | What it does | Cost | Account |
@@ -153,7 +165,7 @@ The only network traffic is:
 - DNS queries to your domain's nameservers (A, MX, TXT, NS records)
 - A TCP connection to your mail server on port 25 (to check STARTTLS)
 
-No telemetry, no analytics, no phone home.
+No telemetry, no analytics, no phone home. The one exception is `--share`, which sends your domain to inboxproof.email to create the public report.
 
 ## Support
 
@@ -197,9 +209,12 @@ The score is a weighted sum of the 8 checks. A score of 80 or higher is "Good" (
 - **v1.2.0**: Add a `--watch` mode that re-checks your domain every N seconds and alerts when a record changes. Useful during DNS propagation.
 - **v1.3.0**: Add a `--baseline` flag that saves your current score to a file and compares against it on subsequent runs. Useful for CI/CD.
 
-Already shipped: `--json` (full audit as JSON) and `--threshold N` (minimum score for a passing exit code) are available now.
+Already shipped: `--json` (full audit as JSON), `--threshold N` (minimum score for a passing exit code), and `--share` (public report link) are available now.
 
 ## Changelog
+
+**v1.2.0** (2026-08-22)
+- Added a `--share` flag. It asks the web service to run the full audit (including IP reputation) and prints a public report link anyone can open, no account needed. The JSON output includes the link as `shareUrl`.
 
 **v1.1.2** (2026-08-22)
 - Added a "Fix this first" line to the human output. When one or more checks fail, it names the failing check with the highest score weight, so you know where to start.
