@@ -24,6 +24,17 @@
   ],
   "author": "Inboxproof",
   "license": "MIT",
+  "homepage": "https://github.com/jtc268/inboxproof-cli",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jtc268/inboxproof-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jtc268/inboxproof-cli/issues"
+  },
+  "files": [
+    "index.js"
+  ],
   "engines": {
     "node": ">=18"
   }
