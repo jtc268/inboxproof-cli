@@ -93,11 +93,12 @@ Inboxproof deliverability audit: example.com
   Score: 60/100  (At risk)
 
   3 check(s) need attention.
+  Fix this first: MX - Add an MX record for example.com.
   Full audit with TLS, IP reputation and per-check detail:
   https://inboxproof.email/
 ```
 
-Every failing check prints the exact record to add or change. A healthy sending domain passes all eight checks and scores 100/100 (Healthy).
+Every failing check prints the exact record to add or change. When several checks fail, the "Fix this first" line names the one with the highest score weight, so you know where to start. A healthy sending domain passes all eight checks and scores 100/100 (Healthy).
 
 ## Troubleshooting
 
@@ -199,6 +200,9 @@ The score is a weighted sum of the 8 checks. A score of 80 or higher is "Good" (
 Already shipped: `--json` (full audit as JSON) and `--threshold N` (minimum score for a passing exit code) are available now.
 
 ## Changelog
+
+**v1.1.2** (2026-08-22)
+- Added a "Fix this first" line to the human output. When one or more checks fail, it names the failing check with the highest score weight, so you know where to start.
 
 **v1.1.1** (2026-08-22)
 - SPF check now collects all `v=spf1` TXT records, hard-fails the check when more than one exists (multiple SPF records are invalid), and notes the final qualifier (`-all` hardfail is strongest, `~all` softfail, none is least strict). Weights unchanged, so scores stay comparable.

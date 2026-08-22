@@ -205,8 +205,12 @@ const WEIGHTS = { MX: 25, SPF: 15, 'SPF limits': 5, DKIM: 20, DMARC: 15, 'DMARC 
   if (threshold !== null) {
     console.log(`  Threshold: ${threshold}/100  ${passThreshold ? '(PASS)' : '(FAIL)'}`);
   }
-  const fails = results.filter(r => !r.pass).length;
-  console.log(`\n  ${fails === 0 ? 'All checks passed.' : `${fails} check(s) need attention.`}`);
+  const fails = results.filter(r => !r.pass);
+  console.log(`\n  ${fails.length === 0 ? 'All checks passed.' : `${fails.length} check(s) need attention.`}`);
+  if (fails.length > 0) {
+    const topFix = [...fails].sort((a, b) => (WEIGHTS[b.name] || 0) - (WEIGHTS[a.name] || 0))[0];
+    console.log(`  Fix this first: ${topFix.name} - ${topFix.fix || topFix.detail}`);
+  }
   console.log('  Full audit with TLS, IP reputation and per-check detail:');
   console.log('  https://inboxproof.email/?domain=' + encodeURIComponent(domain) + '&ref=cli\n');
   process.exit(passThreshold ? 0 : 1);
