@@ -20,9 +20,10 @@ node index.js example.com
 
 | Check | Weight | What it looks for |
 |-------|--------|-------------------|
-| MX    | 25     | A working MX record so mail has somewhere to land |
-| SPF   | 20     | A `v=spf1` TXT record authorizing your senders |
-| DKIM  | 20     | A `v=dkim1` TXT record at a common selector |
+| MX         | 25     | A working MX record so mail has somewhere to land |
+| SPF        | 15     | A `v=spf1` TXT record authorizing your senders |
+| SPF limits | 5      | SPF stays under the 10 DNS-lookup limit (more fails validation) |
+| DKIM       | 20     | A `v=dkim1` TXT record at a common selector |
 | DMARC | 20     | A `v=DMARC1` TXT record at `_dmarc.domain` |
 | PTR   | 5      | Reverse DNS (PTR) on the mail server host |
 | TLS   | 10     | SMTP STARTTLS advertised on port 25 |
