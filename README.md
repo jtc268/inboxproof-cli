@@ -24,8 +24,9 @@ node index.js example.com
 | SPF        | 15     | A `v=spf1` TXT record authorizing your senders |
 | SPF limits | 5      | SPF stays under the 10 DNS-lookup limit (more fails validation) |
 | DKIM       | 20     | A `v=dkim1` TXT record at a common selector |
-| DMARC | 20     | A `v=DMARC1` TXT record at `_dmarc.domain` |
-| PTR   | 5      | Reverse DNS (PTR) on the mail server host |
+| DMARC      | 15     | A `v=DMARC1` TXT record at `_dmarc.domain` |
+| DMARC policy | 5    | A `p=` enforcement tag that is not just `p=none` |
+| PTR        | 5      | Reverse DNS (PTR) on the mail server host |
 | TLS   | 10     | SMTP STARTTLS advertised on port 25 |
 
 Each check is weighted into a 0 to 100 score. Anything under 80 is flagged with the exact record to add or change.

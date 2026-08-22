@@ -97,9 +97,25 @@ async function checkDMARC() {
     const rec = txt.flat().find(t => t.toLowerCase().startsWith('v=dmarc1'));
     if (rec) add('DMARC', true, `DMARC: ${rec}`);
     else add('DMARC', false, 'No DMARC record found.', `Add TXT at _dmarc.${domain}: "v=DMARC1; p=none; rua=mailto:dmarc@${domain}"`);
+    return rec || null;
   } catch (e) {
     add('DMARC', false, `DMARC lookup failed: ${e.code || e.message}`, `Add a DMARC TXT record at _dmarc.${domain}.`);
+    return null;
   }
+}
+
+// p=none only monitors; it does not enforce. Flag it so the user knows the policy is weak.
+function checkDMARCPolicy(dmarcRecord) {
+  if (!dmarcRecord) return;
+  const m = dmarcRecord.toLowerCase().match(/p=(none|quarantine|reject)/);
+  if (!m) {
+    add('DMARC policy', false, 'No p= tag found in the DMARC record.', 'Add a p= tag: p=none (monitor), p=quarantine, or p=reject.');
+    return;
+  }
+  const policy = m[1];
+  if (policy === 'reject') add('DMARC policy', true, 'p=reject (strongest enforcement).');
+  else if (policy === 'quarantine') add('DMARC policy', true, 'p=quarantine (good enforcement).');
+  else add('DMARC policy', false, 'p=none (monitor only, no enforcement).', 'Move to p=quarantine or p=reject once you have confirmed your legitimate mail passes.');
 }
 
 async function checkPTR(mxHosts) {
@@ -132,14 +148,15 @@ function checkTLS(mxHosts) {
   });
 }
 
-const WEIGHTS = { MX: 25, SPF: 15, 'SPF limits': 5, DKIM: 20, DMARC: 20, PTR: 5, TLS: 10 };
+const WEIGHTS = { MX: 25, SPF: 15, 'SPF limits': 5, DKIM: 20, DMARC: 15, 'DMARC policy': 5, PTR: 5, TLS: 10 };
 
 (async () => {
   const mxHosts = await checkMX();
   const spfRecord = await checkSPF();
   checkSPFLimits(spfRecord);
   await checkDKIM();
-  await checkDMARC();
+  const dmarcRecord = await checkDMARC();
+  checkDMARCPolicy(dmarcRecord);
   await checkPTR(mxHosts);
   await checkTLS(mxHosts);
 
