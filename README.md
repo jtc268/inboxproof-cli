@@ -80,7 +80,7 @@ Inboxproof deliverability audit: example.com
 
   [FAIL] MX     No usable MX records found.
          fix: Add an MX record for example.com.
-  [PASS] SPF    SPF: v=spf1 -all
+  [PASS] SPF    SPF: v=spf1 -all (ends with -all hardfail, strongest)
   [PASS] SPF limits 0 DNS lookup(s) (limit 10).
   [PASS] DKIM   DKIM (default): v=DKIM1; p=...
   [PASS] DMARC  DMARC: v=DMARC1;p=reject;sp=reject;adkim=s;aspf=s
@@ -195,10 +195,13 @@ The score is a weighted sum of the 8 checks. A score of 80 or higher is "Good" (
 
 - **v1.2.0**: Add a `--watch` mode that re-checks your domain every N seconds and alerts when a record changes. Useful during DNS propagation.
 - **v1.3.0**: Add a `--baseline` flag that saves your current score to a file and compares against it on subsequent runs. Useful for CI/CD.
-- **v1.4.0**: Add a `--json` flag that outputs the full audit as JSON. Useful for piping into other tools.
-- **v1.5.0**: Add a `--threshold` flag that sets the minimum score for a passing exit code. Useful for CI/CD.
+
+Already shipped: `--json` (full audit as JSON) and `--threshold N` (minimum score for a passing exit code) are available now.
 
 ## Changelog
+
+**v1.1.1** (2026-08-22)
+- SPF check now collects all `v=spf1` TXT records, hard-fails the check when more than one exists (multiple SPF records are invalid), and notes the final qualifier (`-all` hardfail is strongest, `~all` softfail, none is least strict). Weights unchanged, so scores stay comparable.
 
 **v1.1.0** (2026-08-22)
 - Added SPF lookup limit check (flags SPF records with more than 10 DNS lookups)
