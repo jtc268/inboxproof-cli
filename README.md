@@ -130,6 +130,23 @@ Found a domain it scores wrong, or a check that should be weighted differently? 
 
 https://github.com/jtc268/inboxproof-cli/issues
 
+## Frequently asked questions
+
+**Is it free?**
+Yes. No account, no signup, no cost. It reads your live DNS only, so it is safe to run in CI and it changes nothing.
+
+**Does it modify my DNS?**
+No. It only reads your DNS records. It never writes anything.
+
+**Can I use it in CI/CD?**
+Yes. It exits 1 when the score is below a threshold, so you can fail a build the moment your mail config breaks. See the "Gate a deploy on deliverability" section above.
+
+**Does it support subdomains?**
+Yes. Run it against any domain, including subdomains: `npx github:jtc268/inboxproof-cli mail.example.com`.
+
+**What does the score mean?**
+The score is a weighted sum of the 8 checks. A score of 80 or higher is "Good" (B or better). Anything under 80 is flagged with the exact record to add or change.
+
 ## Requirements
 
 Node.js 18 or later. No dependencies.
