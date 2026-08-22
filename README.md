@@ -140,6 +140,16 @@ https://inboxproof.email/
 
 The CLI is the fastest way to check your mail config from your terminal or CI. The web audit adds IP reputation and a shareable fix guide.
 
+## Security
+
+The CLI is read-only. It sends DNS queries to your domain's nameservers and connects to your mail server on port 25 to check TLS. It never writes to your DNS, never stores your domain, and never sends your data to any third party.
+
+The only network traffic is:
+- DNS queries to your domain's nameservers (A, MX, TXT, NS records)
+- A TCP connection to your mail server on port 25 (to check STARTTLS)
+
+No telemetry, no analytics, no phone home.
+
 ## Report a problem
 
 Found a domain it scores wrong, or a check that should be weighted differently? Open an issue:
