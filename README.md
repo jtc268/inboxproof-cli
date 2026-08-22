@@ -128,6 +128,18 @@ The CLI covers the DNS layer. For the complete picture, TLS handshake detail, se
 
 https://inboxproof.email/
 
+## How it compares
+
+| Tool | What it does | Cost | Account |
+|---|---|---|---|
+| inboxproof-cli | 8 DNS checks, 0 to 100 score, exact fix | Free | None |
+| MXToolbox | 20+ DNS checks, no score | Free | None |
+| Mail-Tester | Full email test, 0 to 10 score | Free | None |
+| GlockApps | Full email test, 0 to 100 score | Freemium | Yes |
+| inboxproof (web) | 7 checks + IP reputation + fix guide | Free | None |
+
+The CLI is the fastest way to check your mail config from your terminal or CI. The web audit adds IP reputation and a shareable fix guide.
+
 ## Report a problem
 
 Found a domain it scores wrong, or a check that should be weighted differently? Open an issue:
